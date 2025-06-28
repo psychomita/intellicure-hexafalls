@@ -43,7 +43,8 @@ export async function getDoctorUpcomingAppointments(doctorId: string) {
 export async function createAppointment(
   patientId: string,
   doctorId: string,
-  scheduledAt: Date
+  scheduledAt: Date,
+  notes?: string
 ) {
   try {
     const result = await prisma.appointment.create({
@@ -51,6 +52,7 @@ export async function createAppointment(
         patientId,
         doctorId,
         scheduledAt,
+        notes,
       },
     });
     revalidatePath("/appointments");
@@ -67,9 +69,16 @@ export async function getPatientAppointments(patientId: string) {
     const appointments = await prisma.appointment.findMany({
       where: { patientId },
       include: {
-        doctor: { select: { id: true, name: true, email: true } },
+        doctor: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            specilization: true,
+          },
+        },
       },
-      orderBy: { scheduledAt: "asc" },
+      orderBy: { scheduledAt: "desc" },
     });
     return appointments;
   } catch (error) {
