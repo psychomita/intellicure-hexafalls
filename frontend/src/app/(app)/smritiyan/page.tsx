@@ -19,8 +19,9 @@ import {
   FileImage,
   Upload,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Markdown from "react-markdown";
+import { toast } from "sonner";
 
 interface UploadState {
   file: File | null;
@@ -93,7 +94,25 @@ export default function SmritiyanApp() {
 
       if (!res.ok) throw new Error(`API error: ${res.status}`);
 
-      setAnalysisResult(await res.json());
+      const data = await res.json();
+      setAnalysisResult(data);
+
+      await fetch("/api/testresult", {
+        method: "POST",
+        body: JSON.stringify({
+          testType: "ALZHEIMERS",
+          fileUrl: "",
+          fileName: "",
+          prediction: data.predictedClass,
+          confidence: data.confidences[data.predictedClass],
+          fullReport: data.insights,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      toast.success("Data successfully saved to the database.");
     } catch {
       setAnalysisResult({
         predictedClass: "",
@@ -101,6 +120,7 @@ export default function SmritiyanApp() {
         insights: "",
         error: "Failed to analyze image. Please try again.",
       });
+      toast.error("Failed to analyze image. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -118,21 +138,23 @@ export default function SmritiyanApp() {
 
         if (newProgress >= 100) {
           clearInterval(interval);
-          setTimeout(() => {
-            setUploadState((prev) => ({
-              ...prev,
-              progress: 100,
-              status: "completed",
-            }));
-            fetchAnalysisResult(uploadState.file!);
-          }, 500);
-          return { ...prev, progress: 100 };
+          return {
+            ...prev,
+            progress: 100,
+            status: "completed", // ✅ no fetchAnalysisResult here
+          };
         }
 
         return { ...prev, progress: newProgress };
       });
     }, 200);
-  }, [uploadState.file, fetchAnalysisResult]);
+  }, [uploadState.file]);
+
+  useEffect(() => {
+    if (uploadState.status === "completed" && uploadState.file) {
+      fetchAnalysisResult(uploadState.file);
+    }
+  }, [uploadState.status, uploadState.file, fetchAnalysisResult]);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -389,9 +411,7 @@ export default function SmritiyanApp() {
           )}
 
           {analysisResult && !isAnalyzing && (
-            <Card
-              className="shadow-md mt-6 border-0 bg-card dark:bg-card/80"
-            >
+            <Card className="shadow-md mt-6 border-0 bg-card dark:bg-card/80">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain

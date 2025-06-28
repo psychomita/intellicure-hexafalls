@@ -20,8 +20,9 @@ import {
   HeartPulse,
   Upload,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Markdown from "react-markdown";
+import { toast } from "sonner";
 interface UploadState {
   file: File | null;
   progress: number;
@@ -93,7 +94,26 @@ export default function ShwaasVedaApp() {
 
       if (!res.ok) throw new Error(`API error: ${res.status}`);
 
-      setAnalysisResult(await res.json());
+      const data = await res.json();
+
+      setAnalysisResult(data);
+
+      await fetch("/api/testresult", {
+        method: "POST",
+        body: JSON.stringify({
+          testType: "PNEUMONIA",
+          fileUrl: res.url,
+          fileName: file.name,
+          prediction: data.prediction,
+          confidence: data.confidence,
+          fullReport: data.gemini_analysis,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      toast.success("Data successfully saved to the database.");
     } catch {
       setAnalysisResult({
         prediction: "",
@@ -101,6 +121,7 @@ export default function ShwaasVedaApp() {
         gemini_analysis: "",
         error: "Failed to analyze image. Please try again.",
       });
+      toast.error("Failed to analyze image. Please try again.");
     } finally {
       setIsLoadingResult(false);
     }
@@ -118,21 +139,19 @@ export default function ShwaasVedaApp() {
 
         if (newProgress >= 100) {
           clearInterval(interval);
-          setTimeout(() => {
-            setUploadState((prev) => ({
-              ...prev,
-              progress: 100,
-              status: "completed",
-            }));
-            fetchAnalysisResult(uploadState.file!);
-          }, 500);
-          return { ...prev, progress: 100 };
+          return { ...prev, progress: 100, status: "completed" }; // ✅ No fetch call here
         }
 
         return { ...prev, progress: newProgress };
       });
     }, 200);
-  }, [uploadState.file, fetchAnalysisResult]);
+  }, [uploadState.file]);
+
+  useEffect(() => {
+    if (uploadState.status === "completed" && uploadState.file) {
+      fetchAnalysisResult(uploadState.file);
+    }
+  }, [uploadState.status, uploadState.file, fetchAnalysisResult]);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {

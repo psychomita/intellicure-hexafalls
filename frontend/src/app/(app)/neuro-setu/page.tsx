@@ -26,6 +26,7 @@ import { useTheme } from "next-themes";
 import type React from "react";
 import { useCallback, useState } from "react";
 import Markdown from "react-markdown";
+import { toast } from "sonner";
 
 interface UploadState {
   file: File | null;
@@ -55,10 +56,6 @@ export default function NeuroSetuApp() {
   const [isLoadingResult, setIsLoadingResult] = useState(false);
 
   // Theme-aware colors
-  const containerBg =
-    theme === "dark"
-      ? "bg-gradient-to-br from-background to-background"
-      : "bg-gradient-to-br from-zinc-50 to-zinc-100";
 
   const cardBg = theme === "dark" ? "bg-zinc-800" : "bg-zinc-200";
   const cardBorder = theme === "dark" ? "border-zinc-700" : "border-zinc-300";
@@ -125,11 +122,29 @@ export default function NeuroSetuApp() {
       }
 
       const data = await res.json();
+      
       setAnalysisResult({
         predictedClass: data.predictedClass,
         confidences: data.confidences,
         insights: data.insights,
       });
+
+      await fetch("/api/testresult", {
+        method: "POST",
+        body: JSON.stringify({
+          testType: "BRAIN_TUMOR",
+          fileUrl: res.url,
+          fileName: file.name,
+          prediction: data.predictedClass,
+          confidence: data.confidences[data.predictedClass],
+          fullReport: data.insights,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      toast.success("Data successfully saved to the database.");
     } catch (err: unknown) {
       setAnalysisResult({
         predictedClass: "",
@@ -137,6 +152,7 @@ export default function NeuroSetuApp() {
         insights: "",
         error: "Failed to analyze image. Please try again.",
       });
+      toast.error("Failed to analyze image. Please try again.");
     } finally {
       setIsLoadingResult(false);
     }
@@ -200,15 +216,15 @@ export default function NeuroSetuApp() {
   };
 
   return (
-    <div className={`min-h-screen ${containerBg}`}>
+    <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
-            <h2 className={`text-4xl font-bold ${primaryText} mb-4`}>
+            <h2 className="text-4xl font-bold text-foreground mb-4">
               <span className="text-purple-600">Neuro Setu</span> – Automated
               Brain Tumor Recognition
             </h2>
-            <p className={`text-lg ${secondaryText} leading-relaxed`}>
+            <p className="text-lg leading-relaxed text-muted-foreground">
               Cutting-edge AI for automated brain tumor detection in MRI images.
             </p>
           </div>
@@ -253,12 +269,12 @@ export default function NeuroSetuApp() {
             ))}
           </div>
 
-          <Card className={`shadow-lg border-0 ${cardBg}`}>
+          <Card className={`shadow-lg border-0 bg-card`}>
             <CardHeader className="text-center">
-              <CardTitle className={`text-xl ${primaryText}`}>
+              <CardTitle className={`text-xl text-card-foreground`}>
                 MRI Image Upload
               </CardTitle>
-              <CardDescription className={secondaryText}>
+              <CardDescription className="text-muted-foreground">
                 Supported formats: JPEG, PNG. Max size: 50MB
               </CardDescription>
             </CardHeader>
@@ -267,10 +283,8 @@ export default function NeuroSetuApp() {
                 className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200
                   ${
                     isDragOver
-                      ? "border-emerald-400 bg-emerald-50 dark:bg-emerald-900/30"
-                      : uploadState.status === "error"
-                      ? `${errorBorder} ${errorBg}`
-                      : `${cardBorder} ${dragBg} ${hoverBorder}`
+                      ? `${dragBg} ${hoverBorder} border-emerald-500`
+                      : `border-zinc-300 dark:border-zinc-600`
                   }`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
@@ -292,10 +306,10 @@ export default function NeuroSetuApp() {
                     <div className="flex items-center justify-center gap-3">
                       <FileImage className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                       <div className="text-left">
-                        <p className={`font-medium ${primaryText}`}>
+                        <p className={`font-medium text-foreground`}>
                           {uploadState.file.name}
                         </p>
-                        <p className={`text-sm ${secondaryText}`}>
+                        <p className={`text-sm text-muted-foreground`}>
                           {(uploadState.file.size / (1024 * 1024)).toFixed(2)}{" "}
                           MB
                         </p>
@@ -306,11 +320,11 @@ export default function NeuroSetuApp() {
                       <Upload className="w-12 h-12 text-zinc-400 dark:text-zinc-500 mx-auto" />
                       <div>
                         <p
-                          className={`text-lg font-medium ${primaryText} mb-2`}
+                          className={`text-lg font-medium text-muted-foreground mb-2`}
                         >
                           Drop your MRI brain scan here
                         </p>
-                        <p className={secondaryText}>
+                        <p className={`text-sm text-muted-foreground`}>
                           or click to browse files
                         </p>
                       </div>
