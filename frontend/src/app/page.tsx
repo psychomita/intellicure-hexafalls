@@ -1,3 +1,10 @@
+import { ModeToggle } from "@/components/mode-toggle";
+
 export default function Home() {
-  return <h1>IntelliCure</h1>;
+  return (
+    <h1>
+      IntelliCure
+      <ModeToggle />
+    </h1>
+  );
 }
