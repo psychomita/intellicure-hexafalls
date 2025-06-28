@@ -45,6 +45,10 @@ model User {
   doctorAppointments  Appointment[] @relation("DoctorAppointments")
   patientAppointments Appointment[] @relation("PatientAppointments")
 
+  // Test results
+  testResults TestResult[]
+  textReports TextReport[]
+
   @@map("users")
 }
 
@@ -63,6 +67,43 @@ model Appointment {
   updatedAt DateTime @updatedAt
 
   @@map("appointments")
+}
+
+model TestResult {
+  id         String   @id @map("_id") @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  testType   TestType
+  fileUrl    String
+  fileName   String
+  prediction String
+  confidence Float
+  fullReport String
+  createdAt  DateTime @default(now())
+}
+
+model TextReport {
+  id         String    @id @map("_id") @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  inputType  InputType
+  prediction String
+  confidence Float?
+  fullReport String
+  fileName   String?
+  fileUrl    String?
+  createdAt  DateTime  @default(now())
+}
+
+enum TestType {
+  ALZHEIMERS
+  PNEUMONIA
+  BRAIN_TUMOR
+}
+
+enum InputType {
+  LAB_REPORT
+  PRESCRIPTION
 }
 
 model Session {
