@@ -1,30 +1,43 @@
-"use client"
+"use client";
 
-import { FileText, Brain, CheckCircle2, Loader2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
+import { FileText, Brain, CheckCircle2, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 interface AnalysisProgressProps {
-  progress: number
-  stage: string
-  fileCount: number
+  progress: number;
+  stage: string;
+  fileCount: number;
 }
 
-export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgressProps) {
+export function AnalysisProgress({
+  progress,
+  stage,
+  fileCount,
+}: AnalysisProgressProps) {
   const getStageIcon = () => {
-    if (progress < 25) return <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-    if (progress < 75) return <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400 animate-pulse" />
-    if (progress < 100) return <Loader2 className="w-5 h-5 text-orange-600 dark:text-orange-400 animate-spin" />
-    return <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
-  }
+    if (progress < 25)
+      return <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
+    if (progress < 75)
+      return (
+        <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400 animate-pulse" />
+      );
+    if (progress < 100)
+      return (
+        <Loader2 className="w-5 h-5 text-orange-600 dark:text-orange-400 animate-spin" />
+      );
+    return (
+      <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+    );
+  };
 
   const getProgressColor = () => {
-    if (progress < 25) return "bg-blue-600 dark:bg-blue-500"
-    if (progress < 50) return "bg-purple-600 dark:bg-purple-500"
-    if (progress < 75) return "bg-orange-600 dark:bg-orange-500"
-    return "bg-green-600 dark:bg-green-500"
-  }
+    if (progress < 25) return "bg-blue-600 dark:bg-blue-500";
+    if (progress < 50) return "bg-purple-600 dark:bg-purple-500";
+    if (progress < 75) return "bg-orange-600 dark:bg-orange-500";
+    return "bg-green-600 dark:bg-green-500";
+  };
 
   return (
     <Card className="w-full max-w-md mx-auto shadow-lg border-0 bg-white dark:bg-gray-800 dark:border-gray-700">
@@ -34,7 +47,10 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
           <span>AI Analysis in Progress</span>
         </CardTitle>
         <div className="flex justify-center">
-          <Badge variant="secondary" className="text-xs dark:bg-gray-700 dark:text-gray-200">
+          <Badge
+            variant="secondary"
+            className="text-xs dark:bg-gray-700 dark:text-gray-200"
+          >
             Processing {fileCount} document{fileCount > 1 ? "s" : ""}
           </Badge>
         </div>
@@ -44,7 +60,10 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
         {/* Progress Circle */}
         <div className="flex justify-center">
           <div className="relative w-24 h-24">
-            <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+            <svg
+              className="w-24 h-24 transform -rotate-90"
+              viewBox="0 0 100 100"
+            >
               <circle
                 cx="50"
                 cy="50"
@@ -68,7 +87,9 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">{progress}%</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                {progress}%
+              </span>
             </div>
           </div>
         </div>
@@ -77,7 +98,9 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
         <div className="text-center space-y-3">
           <div className="flex items-center justify-center space-x-2">
             {getStageIcon()}
-            <span className="font-medium text-gray-900 dark:text-white">Current Stage</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              Current Stage
+            </span>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2">
             {stage}
@@ -91,9 +114,9 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
             <span>{progress}% Complete</span>
           </div>
           <div className="relative">
-            <Progress 
-              value={progress} 
-              className="h-3 bg-gray-200 dark:bg-gray-700" 
+            <Progress
+              value={progress}
+              className="h-3 bg-gray-200 dark:bg-gray-700"
             />
             <div
               className={`absolute top-0 left-0 h-3 rounded-full transition-all duration-500 ${getProgressColor()}`}
@@ -104,7 +127,9 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
 
         {/* Analysis Steps */}
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-white">Analysis Steps</h4>
+          <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+            Analysis Steps
+          </h4>
           <div className="space-y-1 text-xs">
             {[
               { threshold: 10, label: "Document Reading" },
@@ -114,20 +139,20 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
               { threshold: 85, label: "Generating Explanations" },
               { threshold: 100, label: "Finalizing Results" },
             ].map((step) => (
-              <div 
+              <div
                 key={step.label}
                 className={`flex items-center space-x-2 ${
-                  progress >= step.threshold 
-                    ? "text-green-600 dark:text-green-400" 
+                  progress >= step.threshold
+                    ? "text-green-600 dark:text-green-400"
                     : "text-gray-400 dark:text-gray-500"
                 }`}
               >
-                <div 
+                <div
                   className={`w-2 h-2 rounded-full ${
-                    progress >= step.threshold 
-                      ? "bg-green-600 dark:bg-green-400" 
+                    progress >= step.threshold
+                      ? "bg-green-600 dark:bg-green-400"
                       : "bg-gray-300 dark:bg-gray-600"
-                  }`} 
+                  }`}
                 />
                 <span>{step.label}</span>
                 {progress >= step.threshold && (
@@ -142,7 +167,10 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
         <div className="text-center">
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {progress < 100 ? (
-              <>Estimated time remaining: {Math.ceil((100 - progress) / 20)} minutes</>
+              <>
+                Estimated time remaining: {Math.ceil((100 - progress) / 20)}{" "}
+                minutes
+              </>
             ) : (
               <>Analysis completed successfully!</>
             )}
@@ -150,5 +178,5 @@ export function AnalysisProgress({ progress, stage, fileCount }: AnalysisProgres
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
