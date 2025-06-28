@@ -13,3 +13,4 @@ pandas
 scalar-fastapi
 python-multipart
 scalar-fastapi
+huggingface_hub
