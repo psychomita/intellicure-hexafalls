@@ -8,7 +8,14 @@ export async function getDoctors() {
   try {
     return (await prisma.user.findMany({
       where: { role: "DOCTOR" },
-      select: { id: true, name: true, email: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        specilization: true,
+        phone: true,
+      },
     })) as Doctor[];
   } catch (error) {
     console.error("Error fetching doctors:", error);
