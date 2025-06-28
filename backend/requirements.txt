@@ -1,0 +1,15 @@
+# requirements.txt
+fastapi
+uvicorn
+tensorflow
+pillow
+numpy
+torch
+torchvision
+python-dotenv
+google-generativeai
+scikit-learn
+pandas
+scalar-fastapi
+python-multipart
+scalar-fastapi
