@@ -25,9 +25,11 @@ export default async function BookPage() {
   }
   return (
     <div className="max-w-full w-full mx-auto p-6 space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Your Appointments</h2>
-      <PatientAppointments patientId={user?.id} />
-      <BookAppointmentForm doctors={doctors} patientId={user?.id} />
+      <h2 className="text-xl font-bold mb-4">Appointments</h2>
+      <div className="grid grid-cols-2 gap-10">
+        <BookAppointmentForm doctors={doctors} patientId={user?.id} />
+        <PatientAppointments patientId={user?.id} />
+      </div>
     </div>
   );
 }
