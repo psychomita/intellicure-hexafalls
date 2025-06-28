@@ -27,12 +27,14 @@ enum AppointmentStatus {
 }
 
 model User {
-  id        String   @id @map("_id")
-  email     String   @unique
-  name      String?
-  role      Role     @default(PATIENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @map("_id")
+  email         String   @unique
+  name          String?
+  role          Role     @default(PATIENT)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  specilization String?  @default("")
+  phone         String?  @default("")
 
   emailVerified Boolean
   image         String?
