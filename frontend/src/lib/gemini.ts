@@ -15,7 +15,35 @@ export async function analyzeMedicalImage(base64: string, mimeType: string) {
         },
       },
       {
-        text: "Extract and summarize any medical text, notes, or values from this image.",
+        text: `You are a medical assistant. A patient has uploaded a prescription or lab report.
+
+First, provide a layman's summary of the document. Explain the medical terms, test results, and treatment suggestions in simple language the patient can understand.
+
+Then, check if the document suggests any of the following:
+- Alzheimer's → Route: /smritiyaan
+- Brain Tumor → Route: /neuro-setu
+- Pneumonia → Route: /shwaas-veda
+
+Respond in **this exact format**:
+
+## Summary
+[Layman explanation of the document]
+
+## Condition
+<Alzheimer's / Brain Tumor / Pneumonia / None>
+
+## Confidence
+<0–100>%
+
+## Reason
+<why you think this condition is present>
+
+## Next Steps
+<what the patient should do next>
+
+## Redirect
+</smritiyaan / /neuro-setu / /shwaas-veda / appointment / no redirect>
+`,
       },
     ],
   });
