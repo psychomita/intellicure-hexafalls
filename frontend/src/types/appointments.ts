@@ -11,7 +11,8 @@ export type Appointment = {
   notes: string | null;
   doctor: {
     id: string;
-    name: string | null;
+    name: string;
     email: string;
+    specilization: string;
   };
 };
