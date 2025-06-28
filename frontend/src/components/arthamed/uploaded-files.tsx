@@ -30,9 +30,9 @@ export function UploadedFiles({ files, onRemoveFile }: UploadedFilesProps) {
 
   const getFileIcon = (type: string) => {
     if (type.startsWith("image/")) {
-      return <ImageIcon className="w-5 h-5 text-blue-600" />
+      return <ImageIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
     }
-    return <FileText className="w-5 h-5 text-red-600" />
+    return <FileText className="w-5 h-5 text-red-600 dark:text-red-400" />
   }
 
   const getFileTypeLabel = (type: string) => {
@@ -43,16 +43,18 @@ export function UploadedFiles({ files, onRemoveFile }: UploadedFilesProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="font-medium text-gray-900">Uploaded Files ({files.length})</h3>
+      <h3 className="font-medium text-gray-900 dark:text-white">
+        Uploaded Files ({files.length})
+      </h3>
 
       <div className="space-y-2">
         {files.map((file) => (
-          <Card key={file.id} className="border border-gray-200">
+          <Card key={file.id} className="border border-gray-200 dark:border-gray-700">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   {file.preview ? (
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
                       <img
                         src={file.preview || "/placeholder.svg"}
                         alt={file.name}
@@ -60,33 +62,45 @@ export function UploadedFiles({ files, onRemoveFile }: UploadedFilesProps) {
                       />
                     </div>
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
                       {getFileIcon(file.type)}
                     </div>
                   )}
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      {file.name}
+                    </p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs dark:bg-gray-700 dark:text-gray-200"
+                      >
                         {getFileTypeLabel(file.type)}
                       </Badge>
-                      <span className="text-xs text-gray-500">{formatFileSize(file.size)}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {formatFileSize(file.size)}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-2 flex-shrink-0">
                   {file.preview && (
-                    <Button variant="ghost" size="sm" onClick={() => window.open(file.preview, "_blank")}>
-                      <Eye className="w-4 h-4" />
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => window.open(file.preview, "_blank")}
+                      className="dark:hover:bg-gray-700"
+                    >
+                      <Eye className="w-4 h-4 text-gray-700 dark:text-gray-300" />
                     </Button>
                   )}
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => onRemoveFile(file.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/30"
                   >
                     <X className="w-4 h-4" />
                   </Button>

@@ -31,7 +31,6 @@ export function FileUpload({
       }
 
       if (acceptedFiles.length > 0) {
-        // Simulate upload progress
         setUploadProgress(0)
         const interval = setInterval(() => {
           setUploadProgress((prev) => {
@@ -59,12 +58,12 @@ export function FileUpload({
 
   const getIcon = () => {
     if (isDragActive && !isDragReject) {
-      return <Upload className="w-12 h-12 text-blue-600 animate-bounce" />
+      return <Upload className="w-12 h-12 text-blue-600 dark:text-blue-400 animate-bounce" />
     }
     if (isDragReject) {
-      return <AlertCircle className="w-12 h-12 text-red-500" />
+      return <AlertCircle className="w-12 h-12 text-red-500 dark:text-red-400" />
     }
-    return <Upload className="w-12 h-12 text-gray-400" />
+    return <Upload className="w-12 h-12 text-gray-400 dark:text-gray-500" />
   }
 
   const getMessage = () => {
@@ -83,10 +82,10 @@ export function FileUpload({
         {...getRootProps()}
         className={cn(
           "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200",
-          isDragActive && !isDragReject && "border-blue-500 bg-blue-50",
-          isDragReject && "border-red-500 bg-red-50",
-          !isDragActive && "border-gray-300 hover:border-gray-400 hover:bg-gray-50",
-          isUploading && "pointer-events-none opacity-50",
+          isDragActive && !isDragReject && "border-blue-500 bg-blue-50 dark:bg-blue-900/30",
+          isDragReject && "border-red-500 bg-red-50 dark:bg-red-900/20",
+          !isDragActive && "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700/50",
+          isUploading && "pointer-events-none opacity-70",
         )}
       >
         <input {...getInputProps()} />
@@ -95,15 +94,23 @@ export function FileUpload({
           {getIcon()}
 
           <div>
-            <p className="text-lg font-medium text-gray-900 mb-2">{getMessage()}</p>
-            <p className="text-sm text-gray-600 mb-4">or click to browse your files</p>
+            <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              {getMessage()}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              or click to browse your files
+            </p>
 
-            <Button variant="outline" disabled={isUploading}>
+            <Button 
+              variant="outline" 
+              disabled={isUploading}
+              className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+            >
               Choose Files
             </Button>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 text-xs text-gray-500">
+          <div className="flex flex-wrap justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <span className="flex items-center space-x-1">
               <FileText className="w-3 h-3" />
               <span>PDF</span>
@@ -123,11 +130,14 @@ export function FileUpload({
 
       {isUploading && (
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
             <span>Uploading files...</span>
             <span>{uploadProgress}%</span>
           </div>
-          <Progress value={uploadProgress} className="h-2" />
+          <Progress 
+            value={uploadProgress} 
+            className="h-2 bg-gray-200 dark:bg-gray-700" 
+          />
         </div>
       )}
     </div>
