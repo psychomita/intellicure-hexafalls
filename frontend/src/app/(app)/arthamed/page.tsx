@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Card,
@@ -16,6 +17,7 @@ import { FileUpload } from "@/components/arthamed/file-upload";
 import { UploadedFiles } from "@/components/arthamed/uploaded-files";
 import { AnalysisProgress } from "@/components/arthamed/analysis-progress";
 import { analyzeMedicalImage } from "@/lib/gemini";
+import Markdown from "react-markdown";
 
 interface UploadedFile {
   id: string;
@@ -26,6 +28,7 @@ interface UploadedFile {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -36,6 +39,7 @@ export default function HomePage() {
     summary: string;
     keyFindings: string[];
   }>({ summary: "", keyFindings: [] });
+  const [redirectRoute, setRedirectRoute] = useState<string | null>(null);
 
   const resetAnalysis = () => {
     uploadedFiles.forEach((file) => {
@@ -46,6 +50,7 @@ export default function HomePage() {
     setAnalysisStage("");
     setAnalysisComplete(false);
     setAnalysisResult({ summary: "", keyFindings: [] });
+    setRedirectRoute(null);
   };
 
   const handleFileUpload = useCallback(async (files: File[]) => {
@@ -97,6 +102,7 @@ export default function HomePage() {
     setAnalysisComplete(false);
     setAnalysisProgress(0);
     setAnalysisStage("");
+    setRedirectRoute(null);
 
     const toastId = toast.loading("Starting analysis...");
     const file = uploadedFiles[0];
@@ -109,10 +115,41 @@ export default function HomePage() {
       const buffer = await fileBlob.arrayBuffer();
       const base64 = Buffer.from(buffer).toString("base64");
 
-      setAnalysisStage("Sending your document...");
+      setAnalysisStage("Processing...");
       setAnalysisProgress(50);
 
-      const responseText = await analyzeMedicalImage(base64, file.type);
+      const response = await analyzeMedicalImage(base64, file.type);
+
+      if (!response) {
+        throw new Error("No response from analysis API.");
+      }
+      const summary =
+        response.match(/## Summary\n([\s\S]*?)## Condition/)?.[1]?.trim() ?? "";
+      const condition =
+        response.match(/## Condition\n(.+?)\n/)?.[1]?.trim() ?? "Unknown";
+      const confidence =
+        response.match(/## Confidence\n(.+?)\n/)?.[1]?.trim() ?? "Unknown";
+      const reason =
+        response.match(/## Reason\n([\s\S]*?)## Next Steps/)?.[1]?.trim() ?? "";
+      const nextSteps =
+        response.match(/## Next Steps\n([\s\S]*?)## Redirect/)?.[1]?.trim() ??
+        "";
+      // const redirect = response.match(/## Redirect\n(.+?)\n?/)?.[1]?.trim() ?? "None";
+
+      let redirect: string;
+      if (condition.includes("None")) {
+        redirect = "/appointments";
+      } else if (condition.includes("Alzheimer's")) {
+        redirect = "/smritiyaan";
+      } else if (condition.includes("Brain Tumor")) {
+        redirect = "/neuro-setu";
+      } else if (condition.includes("Pneumonia")) {
+        redirect = "/shwaas-veda";
+      } else {
+        redirect = "None";
+      }
+
+      const summaryText = `🧾 Summary:\n${summary}\n\n🧠 Condition: ${condition} (${confidence})\n📋 Reason: ${reason}\n🩺 Next Steps: ${nextSteps}`;
 
       const steps = [
         { stage: "Parsing results...", progress: 75 },
@@ -126,16 +163,13 @@ export default function HomePage() {
         await new Promise((res) => setTimeout(res, 600));
       }
 
-      const lines = (responseText ?? "").split("\n").filter(Boolean);
-      const summary = lines[0] ?? "";
-      const keyFindings = lines.slice(1);
-
-      setAnalysisResult({ summary, keyFindings });
+      setAnalysisResult({ summary: summaryText, keyFindings: [] });
       setAnalysisComplete(true);
+      setRedirectRoute(redirect !== "None" ? redirect : null);
 
       toast.success("Analysis completed", {
         id: toastId,
-        description: "Medical data extracted successfully.",
+        description: "Condition detected and next steps suggested.",
       });
     } catch (err) {
       toast.error("API failed", {
@@ -148,22 +182,6 @@ export default function HomePage() {
     }
   };
 
-  const renderAnalysisActions = () => {
-    if (analysisComplete) return null;
-
-    return (
-      <Button
-        onClick={handleStartAnalysis}
-        size="lg"
-        disabled={isAnalyzing}
-        className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-8"
-      >
-        {isAnalyzing ? "Analyzing..." : "Start Analysis"}
-        <Zap className="w-4 h-4 ml-2" />
-      </Button>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-background dark:via-background dark:to-background">
       <main className="container mx-auto px-4 py-8 flex flex-col items-center">
@@ -172,13 +190,13 @@ export default function HomePage() {
             <span className="text-emerald-600">Artha Med</span> – Simplify
             Medical Documents with AI
           </h2>
-          <p className="text-xl text-muted-foreground mb-8 mt-8">
+          <p className="text-lg text-muted-foreground my-4">
             Decode your medical paperwork with AI: Upload prescriptions, test
             results, or clinical notes and get explanations in language you can
             actually understand.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
+          <div className="flex flex-wrap justify-center gap-3 mb-2">
             {[
               {
                 icon: <Shield className="w-4 h-4 text-white" />,
@@ -214,13 +232,13 @@ export default function HomePage() {
         </div>
 
         <div className="w-full max-w-3xl">
-          <Card className="shadow-lg border-0 bg-white/80 dark:bg-background/80 backdrop-blur-sm dark:border-gray-800">
+          <Card className="shadow-lg border-0 bg-background">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2 dark:text-white">
                 <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <span>Upload Medical Documents</span>
               </CardTitle>
-              <CardDescription className="dark:text-gray-300">
+              <CardDescription className="text-sm text-muted-foreground dark:text-zinc-400">
                 Drag and drop files or browse. Accepted formats: PDF, JPG, PNG.
               </CardDescription>
             </CardHeader>
@@ -242,7 +260,15 @@ export default function HomePage() {
                     onRemoveFile={handleRemoveFile}
                   />
                   <div className="mt-6 flex justify-center">
-                    {renderAnalysisActions()}
+                    <Button
+                      onClick={handleStartAnalysis}
+                      size="lg"
+                      disabled={isAnalyzing}
+                      className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-8"
+                    >
+                      {isAnalyzing ? "Analyzing..." : "Start Analysis"}
+                      <Zap className="w-4 h-4 ml-2" />
+                    </Button>
                   </div>
                 </div>
               )}
@@ -261,31 +287,31 @@ export default function HomePage() {
         )}
 
         {analysisComplete && (
-          <div className="mt-8 bg-white/80 dark:bg-background shadow-lg rounded-xl p-6 w-full max-w-5xl space-y-4 border dark:border-gray-800">
+          <div className="mt-8 bg-white/80 dark:bg-background shadow-lg rounded-xl p-6 w-full max-w-5xl space-y-4 border dark:border-zinc-800">
             <h3 className="text-2xl font-bold text-green-700 dark:text-green-400">
               Analysis Results
             </h3>
-            <p className="text-gray-700 dark:text-gray-300">
-              {analysisResult.summary}
-            </p>
+            <div className="text-xs whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
+              <Markdown>{analysisResult.summary}</Markdown>
+            </div>
 
-            {analysisResult.keyFindings.length > 0 && (
-              <div className="mt-4">
-                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                  Key Findings:
-                </h4>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
-                  {analysisResult.keyFindings.map((finding, index) => (
-                    <li key={index}>{finding}</li>
-                  ))}
-                </ul>
-              </div>
+            {redirectRoute && (
+              <Button
+                onClick={() => router.push(redirectRoute)}
+                className="mt-4 mr-4 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Continue to{" "}
+                {redirectRoute
+                  .replace("/", "")
+                  .replace("-", " ")
+                  .replace(/^\w/, (c) => c.toUpperCase())}
+              </Button>
             )}
 
             <Button
               onClick={resetAnalysis}
               variant="outline"
-              className="mt-6 dark:border-gray-800 dark:text-white dark:hover:bg-gray-900"
+              className="mt-6 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-900"
             >
               Analyze New Documents
             </Button>
