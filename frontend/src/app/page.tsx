@@ -28,6 +28,7 @@ import {
   Pill,
   Scan,
   Target,
+  HeartHandshakeIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -184,7 +185,7 @@ export default function IntelliCureLanding() {
               onClick={() => scrollToSection("home")}
             >
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
-                <Heart className="w-5 h-5 text-white" />
+                <HeartHandshakeIcon className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                 IntelliCure
@@ -350,7 +351,7 @@ export default function IntelliCureLanding() {
           </div>
           <div className="absolute top-20 right-10 animate-bounce delay-1500">
             <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-              <Heart className="w-6 h-6 text-green-500" />
+              <HeartHandshakeIcon className="w-6 h-6 text-green-500" />
             </div>
           </div>
           <div className="absolute bottom-20 right-24 animate-bounce delay-1000">
@@ -517,7 +518,7 @@ export default function IntelliCureLanding() {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
+                  <HeartHandshakeIcon className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold">IntelliCure</span>
               </div>
