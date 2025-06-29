@@ -16,9 +16,9 @@ export default async function TestResultsPage() {
   if (!reports.length) {
     return (
       <div className="max-w-3xl mx-auto mt-12 text-center">
-        <h2 className="text-xl font-semibold">No Text Reports Found</h2>
+        <h2 className="text-xl font-semibold">No Doc Reports Found</h2>
         <p className="text-muted-foreground mt-2">
-          You haven&apos;t analyzed any medical text reports yet.
+          You haven&apos;t analyzed any medical doc reports yet.
         </p>
       </div>
     );
@@ -29,7 +29,7 @@ export default async function TestResultsPage() {
       <Tabs defaultValue="results" className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="results">Test Results</TabsTrigger>
-          <TabsTrigger value="reports">Text Reports</TabsTrigger>
+          <TabsTrigger value="reports">Doc Reports</TabsTrigger>
         </TabsList>
         <TabsContent value="results">
           <div className="flex flex-col gap-3 w-full min-w-full">

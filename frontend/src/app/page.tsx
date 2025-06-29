@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const translations = {
   nav: {
@@ -88,8 +89,7 @@ const translations = {
   },
   mission: {
     title: "Our Mission",
-    subtitle:
-      "Making healthcare accessible, intelligent, and patient-centered",
+    subtitle: "Making healthcare accessible, intelligent, and patient-centered",
     description:
       "We believe everyone deserves access to advanced healthcare technology. Our AI-driven platform democratizes medical expertise, providing instant insights and connecting patients with the care they need.",
     stats: [
@@ -115,6 +115,7 @@ export default function IntelliCureLanding() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const session = authClient.useSession();
 
   const t = translations;
 
@@ -230,21 +231,32 @@ export default function IntelliCureLanding() {
               </Button>
 
               {/* Auth Buttons */}
-              <div className="hidden md:flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => router.push("/login")}
-                >
-                  {t.nav.login}
-                </Button>
+              {session.data?.user ? (
                 <Button
                   size="sm"
-                  className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                  className="bg-gradient-to-r text-foreground from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                  onClick={() => router.push("/dashboard")}
                 >
-                  {t.nav.getStarted}
+                  Dashboard
                 </Button>
-              </div>
+              ) : (
+                <div className="hidden md:flex items-center space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => router.push("/login")}
+                  >
+                    {t.nav.login}
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-gradient-to-r text-foreground from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                    onClick={() => router.push("/register")}
+                  >
+                    {t.nav.getStarted}
+                  </Button>
+                </div>
+              )}
 
               {/* Mobile Menu Button */}
               <Button

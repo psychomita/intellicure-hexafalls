@@ -75,7 +75,7 @@ export async function getTextReportsByUser(userId: string) {
 
     return reports;
   } catch (error) {
-    console.error("Failed to fetch text reports:", error);
+    console.error("Failed to fetch doc reports:", error);
     return [];
   }
 }
