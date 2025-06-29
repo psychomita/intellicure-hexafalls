@@ -7,6 +7,7 @@ import {
   IconHelp,
   IconLungs,
   IconPillFilled,
+  IconReportMedical,
   IconSettings,
   IconStethoscope
 } from "@tabler/icons-react";
@@ -62,6 +63,10 @@ const data = {
       title: "Neuro Setu",
       url: "/neuro-setu",
       icon: IconDna2,
+    },{
+      title: "Records",
+      url: "/records",
+      icon: IconReportMedical,
     },
   ],
   navSecondary: [
