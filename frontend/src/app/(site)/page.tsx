@@ -44,7 +44,7 @@ export default function Home() {
       <div
         className="flex h-full min-h-screen items-center justify-center"
         style={{
-          backgroundImage: "url('/landing.webp')",
+          backgroundImage: "url('https://img.freepik.com/premium-photo/cartoonstyle-illustration-medical-scene-with-doctors-patients-interacting_979520-33100.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -81,7 +81,7 @@ export default function Home() {
       </a> */}
                 <div className="relative flex flex-col gap-4 md:items-center lg:flex-row">
                   <WordPullUp
-                    className="relative mx-0 text-balance pt-5 text-5xl font-bold text-white dark:text-white sm:max-w-[60.5rem] sm:text-7xl md:mx-auto md:px-4 md:py-2 md:text-center md:text-8xl lg:text-8xl"
+                    className="relative mx-0 text-balance pt-5 text-5xl font-bold text-white dark:text-white sm:max-w-[60.5rem] sm:text-7xl md:mx-auto md:px-4 md:py-2 md:text-center md:text-7xl lg:text-7xl"
                     words="From Confusion to Cure with AI"
                   />
                   {/* <span className="text-zinc-90 absolute -top-3.5 left-0 z-10 rotate-3 whitespace-nowrap rounded-full bg-zinc-800 px-2.5 py-1 text-[11px] font-semibold uppercase leading-5 tracking-wide text-white md:top-12 md:-rotate-12">
@@ -92,7 +92,7 @@ export default function Home() {
                   <FadeText
                     direction="up"
                     text="Translate complex medical data, detect critical conditions, and guide patients to the right care with Intellicure’s end-to-end AI-driven system."
-                    className="text-balance text-lg tracking-tight text-black/70 dark:text-white md:text-xl"
+                    className="text-balance text-lg tracking-tight text-zinc-300 md:text-xl"
                   />
                 </div>
 
