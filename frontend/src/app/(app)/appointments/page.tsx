@@ -1,6 +1,6 @@
 import { getDoctors } from "@/actions/doctors";
 import BookAppointmentForm from "@/components/platform/book-appointments";
-import PatientAppointments from "@/components/platform/pattient-appointments";
+import PatientAppointments from "@/components/platform/patient-appointments";
 import { getServerSession } from "@/lib/session";
 
 export default async function BookPage() {

@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, Variants } from "motion/react";
-
 import { cn } from "@/lib/utils";
 
 interface WordPullUpProps {
@@ -39,14 +38,18 @@ export default function WordPullUp({
         className,
       )}
     >
-      {words.split(" ").map((word, i) => (
-        <motion.span
-          key={i}
-          variants={framerProps}
-          style={{ display: "inline-block", paddingRight: "8px" }}
-        >
-          {word === "" ? <span>&nbsp;</span> : word}
-        </motion.span>
+      {words.split("\n").map((line, lineIdx) => (
+        <div key={lineIdx}>
+          {line.split(" ").map((word, i) => (
+            <motion.span
+              key={i}
+              variants={framerProps}
+              style={{ display: "inline-block", paddingRight: "8px" }}
+            >
+              {word === "" ? <span>&nbsp;</span> : word}
+            </motion.span>
+          ))}
+        </div>
       ))}
     </motion.h1>
   );

@@ -19,11 +19,11 @@ export default function Header() {
           <Logo className="h-6 text-white" />
         </Link>
         <div className="hidden gap-x-6 sm:flex">
-          <Link href="/about" className="text-zinc-300 hover:text-white">
-            About
-          </Link>
           <Link href="/#features" className="text-zinc-300 hover:text-white">
             Features
+          </Link>
+          <Link href="/#mission" className="text-zinc-300 hover:text-white">
+            Mission
           </Link>
           <Link href="/about" className="text-zinc-300 hover:text-white">
             Contact
@@ -48,7 +48,7 @@ export default function Header() {
           onClick={() => {
             router.push(session ? "/dashboard" : "/login");
           }}
-          className="rounded-full bg-blue-900 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="rounded-full bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           {session.data?.user ? "Dashboard" : "Sign In"}
         </Button>
